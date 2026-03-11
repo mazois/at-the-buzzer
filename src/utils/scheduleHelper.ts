@@ -14,8 +14,6 @@ export function getUpcomingLabel(
   const isUpcoming = state === GameState.PRE;
   if (!isUpcoming) return null;
 
-  console.log(competition)
-
   return `${shortDetail.split("-").slice(1)}`
 
 }

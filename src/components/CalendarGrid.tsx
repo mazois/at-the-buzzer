@@ -67,7 +67,8 @@ export const CalendarGrid = () => {
           const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
           const finalResultLabel = getFinalResultLabel(event, selectedTeam);
           const upcomingLabel = getUpcomingLabel(event);
-          const liveLabel = getLiveLabel(scoreboard?.events[0], selectedTeam);
+          const liveScoreboardEvent = scoreboard?.events.find(e => e.id === event.id);
+          const liveLabel = liveScoreboardEvent ? getLiveLabel(liveScoreboardEvent, selectedTeam) : null;
           const isToday = day === currentDay;
 
           return (
@@ -121,9 +122,8 @@ export const CalendarGrid = () => {
         const event = day ? eventsByDay.get(day) : null;
         const upcomingLabel = getUpcomingLabel(event as ESPNScheduleEvent);
         const finalResultLabel = getFinalResultLabel(event as ESPNScheduleEvent, selectedTeam);
-        const liveLabel = getLiveLabel(scoreboard?.events[0], selectedTeam);
-
-        console.log({ day, event, upcomingLabel, finalResultLabel, liveLabel })
+        const liveScoreboardEvent = event ? scoreboard?.events.find(e => e.id === event.id) : null;
+        const liveLabel = liveScoreboardEvent ? getLiveLabel(liveScoreboardEvent, selectedTeam) : null;
         return (
           <div
             key={i}
