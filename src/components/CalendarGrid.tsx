@@ -50,8 +50,8 @@ export const CalendarGrid = () => {
     return map;
   }, [schedule, currentDate]);
 
-  const sortedEvents = useMemo(() =>
-    Array.from(eventsByDay.entries()).sort(([a], [b]) => a - b),
+  const sortedEvents = useMemo(
+    () => Array.from(eventsByDay.entries()).sort(([a], [b]) => a - b),
     [eventsByDay]
   );
 
@@ -67,14 +67,20 @@ export const CalendarGrid = () => {
           const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
           const finalResultLabel = getFinalResultLabel(event, selectedTeam);
           const upcomingLabel = getUpcomingLabel(event);
-          const liveLabel = getLiveLabel(scoreboard?.events[0], selectedTeam);
+          const liveScoreboardEvent = scoreboard?.events.find((e) => e.id === event.id);
+          const liveLabel = liveScoreboardEvent
+            ? getLiveLabel(liveScoreboardEvent, selectedTeam)
+            : null;
           const isToday = day === currentDay;
 
           return (
             <div
               key={day}
               className="flex items-center gap-3 rounded-lg p-3 border"
-              style={{ borderColor: isToday ? `#${teamData?.alternateColor}` : teamColor, backgroundColor: isToday ? '#1A1A2E' : '#0D0D15' }}
+              style={{
+                borderColor: isToday ? `#${teamData?.alternateColor}` : teamColor,
+                backgroundColor: isToday ? '#1A1A2E' : '#0D0D15',
+              }}
             >
               <div className="w-12 text-center shrink-0">
                 <div className="text-xs font-bold text-zinc-500 font-['Oswald'] tracking-widest uppercase">
@@ -86,15 +92,17 @@ export const CalendarGrid = () => {
               </div>
               <div className="w-px self-stretch" style={{ backgroundColor: teamColor }} />
               <div className="flex flex-col gap-0.5 min-w-0">
-                <span className="text-sm font-medium text-zinc-300 truncate">{event.shortName}</span>
+                <span className="text-sm font-medium text-zinc-300 truncate">
+                  {event.shortName}
+                </span>
                 {finalResultLabel && (
-                  <span className={`text-sm font-bold ${finalResultLabel.result === 'W' ? 'text-green-500' : 'text-red-500'}`}>
+                  <span
+                    className={`text-sm font-bold ${finalResultLabel.result === 'W' ? 'text-green-500' : 'text-red-500'}`}
+                  >
                     {finalResultLabel.result} {finalResultLabel.score}
                   </span>
                 )}
-                {upcomingLabel && (
-                  <span className="text-xs text-zinc-500">{upcomingLabel}</span>
-                )}
+                {upcomingLabel && <span className="text-xs text-zinc-500">{upcomingLabel}</span>}
                 {liveLabel && (
                   <span className="text-xs text-yellow-400 font-medium">● LIVE · {liveLabel}</span>
                 )}
@@ -121,8 +129,12 @@ export const CalendarGrid = () => {
         const event = day ? eventsByDay.get(day) : null;
         const upcomingLabel = getUpcomingLabel(event as ESPNScheduleEvent);
         const finalResultLabel = getFinalResultLabel(event as ESPNScheduleEvent, selectedTeam);
-        const liveLabel = getLiveLabel(scoreboard?.events[0], selectedTeam);
-
+        const liveScoreboardEvent = event
+          ? scoreboard?.events.find((e) => e.id === event.id)
+          : null;
+        const liveLabel = liveScoreboardEvent
+          ? getLiveLabel(liveScoreboardEvent, selectedTeam)
+          : null;
         return (
           <div
             key={i}
@@ -143,7 +155,9 @@ export const CalendarGrid = () => {
             <div className="mt-0.5 sm:mt-1 text-xs text-zinc-500">
               {event && (
                 <div className="flex flex-col gap-0.5">
-                  <span className="hidden sm:block font-medium text-zinc-400">{event.shortName}</span>
+                  <span className="hidden sm:block font-medium text-zinc-400">
+                    {event.shortName}
+                  </span>
                   {finalResultLabel && (
                     <div className="flex gap-1">
                       <span
@@ -151,24 +165,20 @@ export const CalendarGrid = () => {
                       >
                         {finalResultLabel.result}
                       </span>
-                      <span className="hidden sm:inline text-zinc-500">{finalResultLabel.score}</span>
+                      <span className="hidden sm:inline text-zinc-500">
+                        {finalResultLabel.score}
+                      </span>
                     </div>
                   )}
-                  {
-                    upcomingLabel && (
-                      <span className="font-medium hidden sm:inline">
-                        {upcomingLabel}
-                      </span>
-                    )
-                  }
+                  {upcomingLabel && (
+                    <span className="font-medium hidden sm:inline">{upcomingLabel}</span>
+                  )}
                   {liveLabel && (
                     <span className="text-yellow-500 font-medium hidden sm:inline">
                       {liveLabel}
                     </span>
                   )}
-                  {liveLabel && (
-                    <span className="text-yellow-500 font-bold sm:hidden">●</span>
-                  )}
+                  {liveLabel && <span className="text-yellow-500 font-bold sm:hidden">●</span>}
                 </div>
               )}
             </div>
