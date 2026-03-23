@@ -123,7 +123,6 @@ export const CalendarGrid = () => {
         const finalResultLabel = getFinalResultLabel(event as ESPNScheduleEvent, selectedTeam);
         const liveLabel = getLiveLabel(scoreboard?.events[0], selectedTeam);
 
-        console.log({ day, event, upcomingLabel, finalResultLabel, liveLabel })
         return (
           <div
             key={i}

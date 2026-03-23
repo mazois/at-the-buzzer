@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import useAppStore from '@/store/useAppStore';
 import { useTeams } from '@/hooks/useTeams';
 
@@ -11,6 +11,20 @@ export const Header = () => {
     () => data?.find((t) => t.team.abbreviation === selectedTeam)?.team,
     [data, selectedTeam]
   );
+
+  const handleTeamSelect = (team: string ) => {
+    localStorage.setItem('selectedTeam', team);
+    setSelectedTeam(team);
+  }
+
+  useEffect(() => {
+    const storedTeam = localStorage.getItem('selectedTeam');
+    console.log('Stored team from localStorage:', storedTeam);
+    if (storedTeam) {
+      setSelectedTeam(storedTeam);
+    }
+
+  }, [setSelectedTeam]);
 
   return (
     <>
@@ -33,7 +47,7 @@ export const Header = () => {
           <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {(data ?? []).map((team) => (
               <span
-                onClick={() => setSelectedTeam(team.team.abbreviation)}
+                onClick={() => handleTeamSelect(team.team.abbreviation)}
                 key={team.team.abbreviation}
                 className={`inline-flex shrink-0 items-center rounded-md cursor-pointer px-1.5 sm:px-2 py-0.5 sm:py-1 text-xs font-medium ${team.team.abbreviation === selectedTeam ? `text-white` : `text-white opacity-50`} inset-ring inset-ring-gray-400/20 touch-manipulation`}
                 style={{
